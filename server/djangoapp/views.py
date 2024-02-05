@@ -98,6 +98,20 @@ def get_dealerships(request):
 
 
 # Create a `get_dealer_details` view to render the reviews of a dealer
+def get_dealer_details(request, dealer_id):
+    context = {}
+    if request.method == "GET":
+        url = f"https://rafaelmagnav-5000.theiadocker-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/get_reviews"
+        dealer_reviews = get_dealer_reviews_from_cf(url, dealer_id)
+        context['dealer_reviews'] = dealer_reviews
+        url2 = "https://rafaelmagnav-3000.theiadocker-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/dealerships/get"
+        dealerships = get_dealers_from_cf(url2)
+        dealership_name = next((dealer.full_name for dealer in dealerships if dealer.id == dealer_id), None)
+        context['dealer_id'] = dealer_id
+        context['dealership_name'] = dealership_name
+        return render(request, 'djangoapp/dealer_details.html', context)
+
+# Create a `get_dealer_details` view to render the reviews of a dealer
 # def get_dealer_details(request, dealer_id):
 # ...
 
